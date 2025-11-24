@@ -36,6 +36,12 @@ class UsersController {
 
         return response.json(userWithoutPassword);
     }
+
+    async getUsers(request: Request, response: Response) {
+        const users = await prisma.user.findMany()
+
+        return response.json(users)
+    }
 }
 
 export { UsersController };
