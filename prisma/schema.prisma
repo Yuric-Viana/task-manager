@@ -45,8 +45,8 @@ model TeamMembers {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  teams     Teams    @relation(fields: [teamId], references: [id])
-  users     User     @relation(fields: [userId], references: [id])
+  teams     Teams    @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  users     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("team_members")
 }
@@ -65,8 +65,8 @@ model Tasks {
   updatedAt   DateTime      @updatedAt @map("updated_at")
   
   taskHistory taskHistory[]
-  user        User          @relation(fields: [assignedTo], references: [id])
-  team        Teams         @relation(fields: [teamId], references: [id])
+  user        User          @relation(fields: [assignedTo], references: [id], onDelete: Cascade)
+  team        Teams         @relation(fields: [teamId], references: [id], onDelete: Cascade)
 
   @@map("tasks")
 }
@@ -82,9 +82,9 @@ model taskHistory {
   
   changedAt DateTime    @default(now()) @map("changed_at")
   
-  user      User        @relation(fields: [changedBy], references: [id])
-  task      Tasks       @relation(fields: [taskId], references: [id])
-  team      Teams       @relation(fields: [teamId], references: [id])
+  user      User        @relation(fields: [changedBy], references: [id], onDelete: Cascade)
+  task      Tasks       @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  team      Teams       @relation(fields: [teamId], references: [id], onDelete: Cascade)
 }
 
 enum Role {
