@@ -1,0 +1,17 @@
+{
+  "name": "task-manager",
+  "version": "1.0.0",
+  "description": "API de gerenciamento de tarefas com autenticação e controle de status e prioridade.",
+  "main": "index.js",
+  "scripts": {
+  },
+  "author": "Yuri Viana",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.5"
+  }
+}
