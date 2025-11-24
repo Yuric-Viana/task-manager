@@ -9,5 +9,6 @@ const teamsController = new TeamsController()
 
 teamsRoutes.use(ensureAuthenticated, verifyUserAuthorization(["admin"]))
 teamsRoutes.post("/create-teams", teamsController.createTeams)
+teamsRoutes.post("/add-member", teamsController.addMemberToTeam)
 
 export { teamsRoutes }

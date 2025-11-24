@@ -29,6 +29,60 @@ class TeamsController {
 
         return response.status(201).json({ teams })
     }
+
+    async addMemberToTeam(request: Request, response: Response) {
+        const bodySchema = z.object({
+            userId: z.string().uuid(),
+            teamId: z.string().uuid()
+        })
+
+        const { userId: user_id, teamId: team_id } = bodySchema.parse(request.body)
+
+        const user = await prisma.user.findFirst({
+            where: { id: user_id }
+        })
+
+        if (!user) {
+            throw new AppError("Usuário não existente.", 401)
+        }
+
+        const team = await prisma.teams.findFirst({
+            where: { id: team_id }
+        })
+
+        if (!team) {
+            throw new AppError("Time não existente.", 401)
+        }
+
+        const memberIsAlreadyToTeam = await prisma.teamMembers.findFirst({
+            where: { userId: user.id }
+        })
+
+        if (memberIsAlreadyToTeam) {
+            throw new AppError("O membro já faz parte deste time.", 401)
+        }
+
+        const insertMemberToTeam = await prisma.teamMembers.create({
+            data: {
+                teamId: team_id,
+                userId: user_id
+            },
+            include: {
+                users: {
+                    select: {
+                        name: true
+                    }
+                },
+                teams: {
+                    select: {
+                        name: true
+                    }
+                }
+            }
+        })
+
+        return response.status(201).json(insertMemberToTeam)
+    }
 }
 
 export { TeamsController }
