@@ -11,6 +11,7 @@ teamsRoutes.use(ensureAuthenticated, verifyUserAuthorization(["admin"]))
 teamsRoutes.post("/create-teams", teamsController.createTeams)
 teamsRoutes.post("/add-member", teamsController.addMemberToTeam)
 teamsRoutes.delete("/remove-member/:teamMembersId", teamsController.removeMemberToTeam)
+teamsRoutes.delete("/remove-team/:teamId", teamsController.deleteTeams)
 teamsRoutes.get("/all-teams", teamsController.getTeams)
 
 export { teamsRoutes }

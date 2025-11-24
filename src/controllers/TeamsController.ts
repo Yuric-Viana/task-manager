@@ -125,6 +125,28 @@ class TeamsController {
 
         return response.json(teams)
     }
+
+    async deleteTeams(request: Request, response: Response) {
+        const paramsSchema = z.object({
+            teamId: z.string().uuid()
+        })
+
+        const { teamId } = paramsSchema.parse(request.params)
+
+        const team = await prisma.teams.findFirst({
+            where: { id: teamId }
+        })
+
+        if (!team) {
+            throw new AppError("Time não encontrado.", 404)
+        }
+
+        await prisma.teams.delete({
+            where: { id: team.id }
+        })
+
+        return response.status(204).json()
+    }
 }
 
 export { TeamsController }
