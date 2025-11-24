@@ -14,3 +14,5 @@ function verifyUserAuthorization(role: string[]) {
         return next()
     }
 }
+
+export { verifyUserAuthorization }
