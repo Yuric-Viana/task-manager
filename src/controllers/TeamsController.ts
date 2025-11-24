@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { prisma } from "@/lib/prisma";
 import { AppError } from "@/utils/AppError";
-import { z } from 'zod'
+import { string, z } from 'zod'
 
 class TeamsController {
     async createTeams(request: Request, response: Response) {
@@ -82,6 +82,48 @@ class TeamsController {
         })
 
         return response.status(201).json(insertMemberToTeam)
+    }
+
+    async removeMemberToTeam(request: Request, response: Response) {
+        const paramsSchema = z.object({
+            teamMembersId: z.string().uuid(),
+        })
+
+        const { teamMembersId: team_id } = paramsSchema.parse(request.params)
+
+        const team = await prisma.teamMembers.findFirst({
+            where: { id: team_id }
+        })
+
+        if (!team) {
+            throw new AppError("Esse time não existe.", 401)
+        }
+
+        const bodySchema = z.object({
+            userId: z.string().uuid()
+        })
+
+        const { userId: user_id } = bodySchema.parse(request.body)
+
+        const isMemberToTeam = await prisma.teamMembers.findFirst({
+            where: { id: team_id, userId: user_id }
+        })
+
+        if (!isMemberToTeam) {
+            throw new AppError("Usuário não faz parte do time.", 403)
+        }
+
+        await prisma.teamMembers.delete({
+            where: { id: team_id, userId: user_id }
+        })
+
+        return response.status(201).json({ message: "Membro removido com sucesso." })
+    }
+
+    async getTeams(request: Request, response: Response) {
+        const teams = await prisma.teams.findMany()
+
+        return response.json(teams)
     }
 }
 

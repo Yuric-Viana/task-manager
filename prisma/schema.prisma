@@ -26,8 +26,10 @@ model Teams {
   id          String        @id @default(uuid())
   name        String
   description String?
+
   createdAt   DateTime      @default(now()) @map("created_at")
   updatedAt   DateTime      @updatedAt @map("updated_at")
+  
   taskHistory taskHistory[]
   task        Tasks[]
   user        TeamMembers[]
@@ -39,8 +41,10 @@ model TeamMembers {
   id        String   @id @default(uuid())
   teamId    String
   userId    String
+  
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+
   teams     Teams    @relation(fields: [teamId], references: [id])
   users     User     @relation(fields: [userId], references: [id])
 
@@ -53,10 +57,13 @@ model Tasks {
   description String?
   assignedTo  String        @map("assigned_to")
   teamId      String        @map("team_id")
+  
   status      StatusTasks   @default(pending)
   priority    PriorityTasks
+  
   createdAt   DateTime      @default(now()) @map("created_at")
   updatedAt   DateTime      @updatedAt @map("updated_at")
+  
   taskHistory taskHistory[]
   user        User          @relation(fields: [assignedTo], references: [id])
   team        Teams         @relation(fields: [teamId], references: [id])
@@ -69,9 +76,12 @@ model taskHistory {
   taskId    String      @map("task_id")
   teamId    String      @map("team_id")
   changedBy String      @map("changed_by")
+  
   oldStatus StatusTasks @map("old_status")
   newStatus StatusTasks @map("new_status")
+  
   changedAt DateTime    @default(now()) @map("changed_at")
+  
   user      User        @relation(fields: [changedBy], references: [id])
   task      Tasks       @relation(fields: [taskId], references: [id])
   team      Teams       @relation(fields: [teamId], references: [id])
