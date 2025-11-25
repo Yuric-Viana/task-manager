@@ -94,6 +94,30 @@ class TasksController {
         return response.json(tasks)
     }
 
+    async getTasksByUser(request: Request, response: Response) {
+        const paramsSchema = z.object({
+            userId: z.string().uuid()
+        })
+
+        const { userId } = paramsSchema.parse(request.params)
+
+        const user = await prisma.user.findFirst({
+            where: { id: userId }
+        })
+
+        if (!user) {
+            throw new AppError("Usuário inexistente.", 404)
+        }
+
+        const tasksByUser = await prisma.tasks.findMany({
+            where: {
+                assignedTo: userId
+            }
+        })
+
+        return response.json(tasksByUser)
+    }
+
     async getAllTasksByTeam(request: Request, response: Response) {
         const paramsSchema = z.object({
             teamId: z.string().uuid()

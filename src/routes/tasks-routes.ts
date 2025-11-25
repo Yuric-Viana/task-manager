@@ -19,6 +19,7 @@ taskRoute.use(ensureAuthenticated, verifyUserAuthorization(["admin"]))
 taskRoute.post("/create-task", tasksController.createTask)
 taskRoute.get("/all-tasks", tasksController.getTasks)
 taskRoute.get("/team-tasks/:teamId", tasksController.getAllTasksByTeam)
+taskRoute.get("/user-tasks/:userId", tasksController.getTasksByUser)
 taskRoute.delete("/delete-task/:taskId", tasksController.deleteTask)
 
 taskRoute.get("/all-tasks-history", tasksHistoryController.getAllTasksHistory)
