@@ -34,7 +34,7 @@ class UsersController {
 
         const { password: _, ...userWithoutPassword } = user;
 
-        return response.json(userWithoutPassword);
+        return response.status(201).json(userWithoutPassword);
     }
 
     async getUsers(request: Request, response: Response) {
