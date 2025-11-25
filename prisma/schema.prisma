@@ -30,7 +30,6 @@ model Teams {
   createdAt   DateTime      @default(now()) @map("created_at")
   updatedAt   DateTime      @updatedAt @map("updated_at")
   
-  taskHistory taskHistory[]
   task        Tasks[]
   user        TeamMembers[]
 
@@ -74,7 +73,6 @@ model Tasks {
 model taskHistory {
   id        String      @id @default(uuid())
   taskId    String      @map("task_id")
-  teamId    String      @map("team_id")
   changedBy String      @map("changed_by")
   
   oldStatus StatusTasks @map("old_status")
@@ -84,7 +82,6 @@ model taskHistory {
   
   user      User        @relation(fields: [changedBy], references: [id], onDelete: Cascade)
   task      Tasks       @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  team      Teams       @relation(fields: [teamId], references: [id], onDelete: Cascade)
 }
 
 enum Role {
