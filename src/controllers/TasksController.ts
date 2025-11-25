@@ -18,7 +18,7 @@ class TasksController {
 
         const task = await prisma.tasks.create({
             data: {
-                title, 
+                title,
                 description: description ?? "",
                 assignedTo,
                 teamId,
@@ -28,6 +28,94 @@ class TasksController {
         })
 
         return response.status(201).json(task)
+    }
+
+    async updateTask(request: Request, response: Response) {
+        const paramsSchema = z.object({
+            taskId: z.string().uuid()
+        })
+
+        const bodySchema = z.object({
+            title: z.string().optional(),
+            description: z.string().optional(),
+            status: z.enum(['pending', 'in_progress', 'completed']).optional(),
+            priority: z.enum(['high', 'medium', 'low']).optional(),
+            teamId: z.string().uuid().optional()
+        })
+
+        const { taskId } = paramsSchema.parse(request.params)
+
+        const { description, priority, status, teamId, title } = bodySchema.parse(request.body)
+
+        if (description == null && priority == null && status == null && teamId === null && title === null) {
+            return response.json({ message: "Nenhum campo foi atualizado." })
+        }
+
+        const task = await prisma.tasks.findFirst({
+            where: { id: taskId, teamId }
+        })
+
+        const team = await prisma.teams.findFirst({
+            where: { id: teamId }
+        })
+
+        if (!team) {
+            throw new AppError("Time inexistente.", 404)
+        }
+
+        if (!task) {
+            throw new AppError("Tarefa inexistente.", 404)
+        }
+
+        if (task.assignedTo != request.user.id && request.user.role != "admin") {
+            throw new AppError("Não autorizado.", 403)
+        }
+
+        const newTask = await prisma.tasks.update({
+            where: {
+                id: taskId
+            },
+            data: {
+                title: title ?? task.title,
+                description: description ?? task.description,
+                status: status ?? task.status,
+                priority: priority ?? task.priority,
+                teamId: teamId ?? task.teamId
+            }
+        })
+
+        return response.status(201).json({ newTask })
+
+    }
+
+    async getTasks(request: Request, response: Response) {
+        const tasks = await prisma.tasks.findMany()
+
+        return response.json(tasks)
+    }
+
+    async getAllTasksByTeam(request: Request, response: Response) {
+        const paramsSchema = z.object({
+            teamId: z.string().uuid()
+        })
+
+        const { teamId } = paramsSchema.parse(request.params)
+
+        const team = await prisma.teams.findFirst({
+            where: { id: teamId }
+        })
+
+        if (!team) {
+            throw new AppError("Time inexistente.", 404)
+        }
+
+        const allTasks = await prisma.tasks.findMany({
+            where: {
+                teamId
+            }
+        })
+
+        return response.json(allTasks)
     }
 }
 
