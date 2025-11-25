@@ -25,6 +25,11 @@ class TaskStatusController {
             throw new AppError("Tarefa inexistente.", 404)
         }
 
+        
+        if (task.status == status) {
+            throw new AppError("O status inserido é o mesmo que o anterior.")
+        }
+
         if (task.assignedTo != request.user.id && request.user.role != "admin") {
             throw new AppError("Não autorizado.", 404)
         }
