@@ -25,7 +25,6 @@ class TaskStatusController {
             throw new AppError("Tarefa inexistente.", 404)
         }
 
-        
         if (task.status == status) {
             throw new AppError("O status inserido é o mesmo que o anterior.")
         }

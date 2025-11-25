@@ -117,6 +117,28 @@ class TasksController {
 
         return response.json(allTasks)
     }
+
+    async deleteTask(request: Request, response: Response) {
+        const paramsSchema = z.object({
+            taskId: z.string().uuid()
+        })
+
+        const { taskId } = paramsSchema.parse(request.params)
+
+        const task = await prisma.tasks.findFirst({
+            where: { id: taskId }
+        })
+
+        if (!task) {
+            throw new AppError("Tarefa inexistente.", 404)
+        }
+
+        await prisma.tasks.delete({
+            where: { id: taskId }
+        })
+
+        return response.json({ message: "Tarefa deletada com sucesso." })
+    }
 }
 
 export { TasksController }
