@@ -1,3 +1,5 @@
+Error.stackTraceLimit = 1;
+
 import request from 'supertest'
 
 import { app } from '@/app'
@@ -6,10 +8,12 @@ import { prisma } from '@/lib/prisma'
 describe("SessionsController", () => {
     let userId: string
     let userTwoId: string
+    let userThreeId: string
 
     afterAll(async () => {
         await prisma.user.delete({ where: { id: userId } })
         await prisma.user.delete({ where: { id: userTwoId } })
+        await prisma.user.delete({ where: { id: userThreeId } })
 
         await prisma.$disconnect()
     })
@@ -57,7 +61,7 @@ describe("SessionsController", () => {
             password: "test123test"
         })
 
-        userTwoId = userResponse.body.id
+        userThreeId = userResponse.body.id
 
         const sessionsResponse = await request(app).post("/sessions").send({
             email: "testusertwo@email.com",
